@@ -276,14 +276,38 @@
                     </div>
                      <h3 class="text-2xl font-semibold mt-12 mb-6 border-b-2 border-blue-500 pb-2 text-white">Skills</h3>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
-                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">SCADA Software Proficiency</p></div>
-                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">RTU Programming</p></div>
-                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">HMI/GUI Design</p></div>
-                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">Industrial Communication Protocols</p></div>
-                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">System Architecture & Design</p></div>
-                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">Project Management</p></div>
-                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">Database Management</p></div>
-                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">Scripting and Programming</p></div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item flex flex-col items-center justify-center">
+                            <i class="fas fa-desktop text-3xl text-blue-400 mb-3"></i>
+                            <p class="font-medium text-gray-300">SCADA Software Proficiency</p>
+                        </div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item flex flex-col items-center justify-center">
+                            <i class="fas fa-microchip text-3xl text-blue-400 mb-3"></i>
+                            <p class="font-medium text-gray-300">RTU Programming</p>
+                        </div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item flex flex-col items-center justify-center">
+                            <i class="fas fa-palette text-3xl text-blue-400 mb-3"></i>
+                            <p class="font-medium text-gray-300">HMI/GUI Design</p>
+                        </div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item flex flex-col items-center justify-center">
+                            <i class="fas fa-network-wired text-3xl text-blue-400 mb-3"></i>
+                            <p class="font-medium text-gray-300">Industrial Communication Protocols</p>
+                        </div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item flex flex-col items-center justify-center">
+                            <i class="fas fa-project-diagram text-3xl text-blue-400 mb-3"></i>
+                            <p class="font-medium text-gray-300">System Architecture & Design</p>
+                        </div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item flex flex-col items-center justify-center">
+                            <i class="fas fa-clipboard-list text-3xl text-blue-400 mb-3"></i>
+                            <p class="font-medium text-gray-300">Project Management</p>
+                        </div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item flex flex-col items-center justify-center">
+                            <i class="fas fa-database text-3xl text-blue-400 mb-3"></i>
+                            <p class="font-medium text-gray-300">Database Management</p>
+                        </div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item flex flex-col items-center justify-center">
+                            <i class="fas fa-code text-3xl text-blue-400 mb-3"></i>
+                            <p class="font-medium text-gray-300">Scripting and Programming</p>
+                        </div>
                     </div>
                 </section>
 
@@ -398,13 +422,13 @@
                     <h2 class="text-3xl font-bold text-white mb-8">Contact & Reference</h2>
                     
                     <h3 class="text-2xl font-semibold text-white mb-6">Get In Touch</h3>
-                    <form action="#" method="POST">
+                    <form action="https://formspree.io/f/mldwngeq" method="POST">
                         <div class="grid md:grid-cols-2 gap-6">
-                           <input type="text" placeholder="Your Name" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white">
-                           <input type="email" placeholder="Your Email" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white">
+                           <input type="text" name="name" placeholder="Your Name" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white">
+                           <input type="email" name="email" placeholder="Your Email" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white">
                         </div>
                         <div class="mt-6">
-                            <textarea placeholder="Your Message" rows="6" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white"></textarea>
+                            <textarea name="message" placeholder="Your Message" rows="6" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white"></textarea>
                         </div>
                         <div class="mt-6">
                             <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">Send Message</button>
@@ -516,8 +540,5 @@
     </script>
 </body>
 </html>
-
-
-
 
 
