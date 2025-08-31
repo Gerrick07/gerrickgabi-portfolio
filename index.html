@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive CV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background */
+            color: #c9d1d9;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: #161b22;
+            border-radius: 1.5rem;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            border: 1px solid #30363d;
+            overflow: hidden;
+        }
+        .active-tab {
+            color: #58a6ff; /* Bright blue accent */
+            position: relative;
+        }
+        .active-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; /* Adjusted for border */
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #58a6ff;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.7);
+        }
+        .portfolio-active {
+            color: #ffffff;
+            background-color: #3b82f6;
+        }
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .content-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .portfolio-item {
+            animation: scaleIn 0.4s ease-in-out;
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .portfolio-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 1rem;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .portfolio-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 75%;
+            height: 100%;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: skewX(-25deg);
+            transition: left 0.7s ease-in-out;
+            z-index: 1;
+        }
+
+        .portfolio-item:hover::before {
+            left: 125%;
+        }
+        
+        .portfolio-item > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .what-i-do-card, .skill-item {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .what-i-do-card:hover, .skill-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .what-i-do-card::before, .skill-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 75%;
+            height: 100%;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: skewX(-25deg);
+            transition: left 0.7s ease-in-out;
+            z-index: 1;
+        }
+
+        .what-i-do-card:hover::before, .skill-item:hover::before {
+            left: 125%;
+        }
+        
+        .what-i-do-card > *, .skill-item > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            background-color: #3036d;
+            color: #8b949e;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Styles for the project modal */
+        #project-modal.hidden {
+            display: none;
+        }
+        #modal-content {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        #project-modal.show #modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+
+        /* Custom scrollbar for a more futuristic feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #161b22;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #58a6ff;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="main-container md:flex">
+        <!-- Left Pane -->
+        <aside class="w-full md:w-1/3 lg:w-1/4 bg-[#0d1117] p-8 border-r border-gray-800">
+            <div class="flex flex-col items-center text-center">
+                <img src="https://i.imgur.com/WZIwWR5.jpeg" alt="Profile Picture" class="rounded-full w-36 h-36 mb-6 border-4 border-gray-700 shadow-lg shadow-blue-500/20">
+                <h1 class="text-2xl font-bold text-white">Gerrick Gabi</h1>
+                <p class="text-md text-blue-400 mt-2">Instrumentation Control Engineer ||</p>
+                <p class="text-md text-blue-400 mt-1">Sr. SCADA Engineer</p>
+
+
+                <div class="mt-8 text-left w-full">
+                    <div class="flex items-center mb-4 text-gray-400">
+                        <i class="fas fa-envelope w-6 text-blue-400"></i>
+                        <a href="mailto:gabigerrick3@gmail.com" class="ml-3 hover:text-blue-400">gabigerrick3@gmail.com</a>
+                    </div>
+                    <div class="flex items-center mb-4 text-gray-400">
+                        <i class="fas fa-phone w-6 text-blue-400"></i>
+                        <a href="tel:+639204574625" class="ml-3 hover:text-blue-400">+639204574625</a>
+                    </div>
+                    <div class="flex items-center mb-4 text-gray-400">
+                        <i class="fas fa-birthday-cake w-6 text-blue-400"></i>
+                        <span class="ml-3">July 30, 1999</span>
+                    </div>
+                     <div class="flex items-center mb-4 text-gray-400">
+                        <i class="fas fa-map-marker-alt w-6 text-blue-400"></i>
+                        <span class="ml-3">Batangas City, Batangas, Philippines</span>
+                    </div>
+                </div>
+                
+                <div class="flex mt-6 space-x-4">
+                    <a href="#" class="text-gray-500 hover:text-blue-400"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-gray-500 hover:text-blue-400"><i class="fab fa-github fa-lg"></i></a>
+                    <a href="#" class="text-gray-500 hover:text-blue-400"><i class="fab fa-linkedin fa-lg"></i></a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Pane -->
+        <main class="w-full md:w-2/3 lg:w-3/4 p-8 md:p-12">
+            <!-- Navigation -->
+            <nav class="mb-10">
+                <ul class="flex space-x-8 border-b border-gray-800 pb-2">
+                    <li><button data-target="about" class="nav-tab active-tab text-lg font-semibold text-gray-400 hover:text-blue-400 transition-colors">About</button></li>
+                    <li><button data-target="resume" class="nav-tab text-lg font-semibold text-gray-400 hover:text-blue-400 transition-colors">Resume</button></li>
+                    <li><button data-target="projects" class="nav-tab text-lg font-semibold text-gray-400 hover:text-blue-400 transition-colors">Projects</button></li>
+                    <li><button data-target="contact-reference" class="nav-tab text-lg font-semibold text-gray-400 hover:text-blue-400 transition-colors">Contact & Reference</button></li>
+                </ul>
+            </nav>
+
+            <!-- Content Sections -->
+            <div id="content">
+                <!-- About Section -->
+                <section id="about" class="content-section active">
+                    <h2 class="text-3xl font-bold text-white mb-4">About Me</h2>
+                    <p class="text-gray-400 leading-relaxed mb-4">Senior SCADA Engineer with a proven track record of enhancing control system performance and reliability over nearly four years.</p>
+                    <p class="text-gray-400 leading-relaxed">A strategic problem-solver skilled in identifying and resolving system bottlenecks, improving data acquisition processes, and ensuring cybersecurity compliance for industrial control systems. Passionate about leveraging technology to drive operational excellence, reduce downtime, and provide actionable insights through well-designed SCADA architecture. Eager to contribute expertise to a challenging new role.</p>
+                    <h3 class="text-2xl font-bold text-white mt-8 mb-4">What I Do</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 what-i-do-card">
+                            <i class="fas fa-sitemap text-2xl text-blue-400 mb-3"></i>
+                            <h4 class="font-semibold text-lg text-white mb-2">System Design & Architecture</h4>
+                            <p class="text-gray-400">Design and structure the entire SCADA system to ensure it's efficient, reliable, and meets operational goals.</p>
+                        </div>
+                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 what-i-do-card">
+                            <i class="fas fa-cogs text-2xl text-blue-400 mb-3"></i>
+                            <h4 class="font-semibold text-lg text-white mb-2">Problem-Solving & Optimization</h4>
+                            <p class="text-gray-400">Act as strategic problem-solvers, identifying and fixing issues like system bottlenecks to improve overall performance.</p>
+                        </div>
+                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 what-i-do-card">
+                            <i class="fas fa-database text-2xl text-blue-400 mb-3"></i>
+                            <h4 class="font-semibold text-lg text-white mb-2">Data Management</h4>
+                            <p class="text-gray-400">Responsible for improving how data is collected and ensuring that the data provides meaningful, actionable insights for the organization.</p>
+                        </div>
+                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 what-i-do-card">
+                            <i class="fas fa-tasks text-2xl text-blue-400 mb-3"></i>
+                            <h4 class="font-semibold text-lg text-white mb-2">Project Lifecycle Management</h4>
+                            <p class="text-gray-400">Manage projects from the initial concept and specification all the way through to final commissioning and providing ongoing support.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Resume Section -->
+                <section id="resume" class="content-section">
+                    <h2 class="text-3xl font-bold text-white mb-8">Resume</h2>
+                    <div class="grid md:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-6 border-b-2 border-blue-500 pb-2 text-white">Experience</h3>
+                             <div class="mb-6">
+                                <h4 class="text-xl font-semibold text-gray-200">Senior SCADA Engineer | Service Support</h4>
+                                <p class="text-blue-400 my-1">Nayon Kontrol Systems Corporation | 2022 - Present</p>
+                                <p class="text-gray-400">Leading a team of Engineers in SCADA Automation solutions for enterprise clients. Focused on performance, scalability, and user experience in a Power Industry.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-6 border-b-2 border-blue-500 pb-2 text-white">Education</h3>
+                             <div class="mb-6">
+                                <h4 class="text-xl font-semibold text-gray-200">Bachelor in Science of Instrumentation and Control Engineering</h4>
+                                <p class="text-blue-400 my-1">Batangas State University, The National Engineering University | 2015 - 2021</p>
+                                <p class="text-gray-400">Focused on Industrial Automation, completing a thesis on Automation of Plant Growth</p>
+                            </div>
+                        </div>
+                    </div>
+                     <h3 class="text-2xl font-semibold mt-12 mb-6 border-b-2 border-blue-500 pb-2 text-white">Skills</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">SCADA Software Proficiency</p></div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">RTU Programming</p></div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">HMI/GUI Design</p></div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">Industrial Communication Protocols</p></div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">System Architecture & Design</p></div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">Project Management</p></div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">Database Management</p></div>
+                        <div class="bg-gray-800 border border-gray-700 p-5 rounded-lg skill-item"><p class="font-medium text-gray-300">Scripting and Programming</p></div>
+                    </div>
+                </section>
+
+                <!-- Projects Section -->
+                <section id="projects" class="content-section">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white">Projects</h2>
+                        <p class="text-gray-400 mt-2 mb-8 leading-relaxed">Here is a selection of key projects where I have provided SCADA solutions, commissioning, and troubleshooting. These examples demonstrate my experience in system implementation, problem-solving, and project management across various power generation and distribution facilities in the Philippines.</p>
+                    </div>
+                    <div id="portfolio-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Project 1 -->
+                        <div class="portfolio-item group cursor-pointer" 
+                             data-title="Condition Based Monitoring" 
+                             data-img="https://placehold.co/600x400/3b82f6/0d1117?text=CBM"
+                             data-description="Implemented a comprehensive Condition Based Monitoring SCADA solution across the Visayas region (Cebu, Leyte, Negros, Bohol) to enhance predictive maintenance and system reliability.">
+                            <img src="https://placehold.co/600x400/3b82f6/0d1117?text=CBM" alt="Project 1" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Condition Based Monitoring</h3>
+                        </div>
+                        <!-- Project 2 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="Orion Solar Plant SCADA Solution"
+                             data-img="https://placehold.co/600x400/10b981/0d1117?text=Orion+Solar"
+                             data-description="Deployed and commissioned the complete SCADA system for the Orion Solar Plant in Bataan, ensuring seamless monitoring and control of solar power generation.">
+                             <img src="https://placehold.co/600x400/10b981/0d1117?text=Orion+Solar" alt="Project 2" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Orion Solar Plant</h3>
+                        </div>
+                        <!-- Project 3 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="Citicore Mariveles PPC Reconfiguration"
+                             data-img="https://placehold.co/600x400/8b5cf6/0d1117?text=Citicore+PPC"
+                             data-description="Executed the reconfiguration of the Power Plant Controller (PPC) for Citicore in Mariveles, Bataan, optimizing plant performance and grid compliance.">
+                            <img src="https://placehold.co/600x400/8b5cf6/0d1117?text=Citicore+PPC" alt="Project 3" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Citicore Mariveles PPC Reconfiguration</h3>
+                        </div>
+                        <!-- Project 4 -->
+                         <div class="portfolio-item group cursor-pointer"
+                              data-title="Citicore Toledo RTU Troubleshooting"
+                              data-img="https://placehold.co/600x400/ef4444/0d1117?text=Toledo+RTU"
+                              data-description="Provided expert troubleshooting and resolution for Remote Terminal Unit (RTU) issues at the Citicore plant in Toledo, Cebu, restoring critical data communication and control.">
+                            <img src="https://placehold.co/600x400/ef4444/0d1117?text=Toledo+RTU" alt="Project 4" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Citicore Toledo RTU Troubleshooting</h3>
+                        </div>
+                        <!-- Project 5 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="Tanauan Solar Plant Commissioning"
+                             data-img="https://placehold.co/600x400/f97316/0d1117?text=Tanauan+Solar"
+                             data-description="Successfully commissioned the SCADA system for the Tanauan Solar Plant in Batangas, overseeing the project from initial setup to full operational status.">
+                             <img src="https://placehold.co/600x400/f97316/0d1117?text=Tanauan+Solar" alt="Project 5" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Tanauan Solar Plant</h3>
+                        </div>
+                        <!-- Project 6 -->
+                         <div class="portfolio-item group cursor-pointer"
+                              data-title="NGCP VSUP Implementation"
+                              data-img="https://placehold.co/600x400/14b8a6/0d1117?text=NGCP+VSUP"
+                              data-description="Led the implementation of the Visayas Substation Upgrade Project (VSUP) for NGCP across Cebu, Leyte, and Samar, enhancing the region's power grid infrastructure.">
+                            <img src="https://placehold.co/600x400/14b8a6/0d1117?text=NGCP+VSUP" alt="Project 6" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">NGCP VSUP</h3>
+                        </div>
+                        <!-- Project 7 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="AC SCADA for Dagohoy Solar Plant"
+                             data-img="https://placehold.co/600x400/3b82f6/0d1117?text=Dagohoy+Solar"
+                             data-description="Developed and deployed a custom AC SCADA solution for the Dagohoy Solar Plant in Bohol, providing robust control and monitoring capabilities.">
+                            <img src="https://placehold.co/600x400/3b82f6/0d1117?text=Dagohoy+Solar" alt="Project 7" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">AC SCADA for Dagohoy Solar Plant</h3>
+                        </div>
+                        <!-- Project 8 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="ACEN Tech Hub SCADA Integration"
+                             data-img="https://placehold.co/600x400/10b981/0d1117?text=ACEN+Hub"
+                             data-description="Integrated advanced SCADA solutions at the ACEN Tech Hub in Mariveles, Bataan, establishing a central point for energy monitoring and management.">
+                             <img src="https://placehold.co/600x400/10b981/0d1117?text=ACEN+Hub" alt="Project 8" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">ACEN Tech Hub</h3>
+                        </div>
+                        <!-- Project 9 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="First Gen RTU Assessment"
+                             data-img="https://placehold.co/600x400/8b5cf6/0d1117?text=First+Gen"
+                             data-description="Conducted a thorough assessment and diagnosis of RTU problems for First Gen in Bolbok, Batangas, providing critical analysis and recommendations for resolution.">
+                            <img src="https://placehold.co/600x400/8b5cf6/0d1117?text=First+Gen" alt="Project 9" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Assessment of RTU Problem for First Gen</h3>
+                        </div>
+                        <!-- Project 10 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="Milagrosa Gateway Configuration"
+                             data-img="https://placehold.co/600x400/ef4444/0d1117?text=Milagrosa"
+                             data-description="Managed the configuration and testing of the communication gateway in Milagrosa, Calamba, ensuring reliable data transfer between field devices and the central control system.">
+                            <img src="https://placehold.co/600x400/ef4444/0d1117?text=Milagrosa" alt="Project 10" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Milagrosa Gateway Configuration</h3>
+                        </div>
+                        <!-- Project 11 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="Citicore Silay RTU Troubleshooting"
+                             data-img="https://placehold.co/600x400/f97316/0d1117?text=Citicore+Silay"
+                             data-description="Performed on-site troubleshooting for RTU systems at the Citicore plant in Silay, Bacolod, swiftly resolving communication errors and restoring system functionality.">
+                            <img src="https://placehold.co/600x400/f97316/0d1117?text=Citicore+Silay" alt="Project 11" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Citicore Silay RTU Troubleshooting</h3>
+                        </div>
+                        <!-- Project 12 -->
+                        <div class="portfolio-item group cursor-pointer"
+                             data-title="Jobin SQM Solar Phase 4A RTU"
+                             data-img="https://placehold.co/600x400/14b8a6/0d1117?text=Jobin+Solar"
+                             data-description="Commissioned the Remote Terminal Unit for Phase 4A of the Jobin SQM Solar project in Subic, Zambales, integrating it seamlessly into the existing SCADA network.">
+                            <img src="https://placehold.co/600x400/14b8a6/0d1117?text=Jobin+Solar" alt="Project 12" class="rounded-lg shadow-md w-full h-auto mb-3 pointer-events-none">
+                            <h3 class="text-lg font-semibold text-white">Jobin SQM Solar Phase 4A RTU</h3>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact & Reference Section -->
+                <section id="contact-reference" class="content-section">
+                    <h2 class="text-3xl font-bold text-white mb-8">Contact & Reference</h2>
+                    
+                    <h3 class="text-2xl font-semibold text-white mb-6">Get In Touch</h3>
+                    <form action="#" method="POST">
+                        <div class="grid md:grid-cols-2 gap-6">
+                           <input type="text" placeholder="Your Name" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white">
+                           <input type="email" placeholder="Your Email" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white">
+                        </div>
+                        <div class="mt-6">
+                            <textarea placeholder="Your Message" rows="6" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-white"></textarea>
+                        </div>
+                        <div class="mt-6">
+                            <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">Send Message</button>
+                        </div>
+                    </form>
+
+                    <h3 class="text-2xl font-semibold text-white mt-12 mb-6">My Location</h3>
+                    <div class="rounded-lg overflow-hidden border border-gray-700">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3870.476728328657!2d121.0229375!3d13.78156!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd0f1f1a58a09b%3A0x2e08a0d4b92b95b5!2sQ2QF%2BJ55%2C%20San%20Pascual%2C%20Batangas%2C%20Philippines!5e0!3m2!1sen!2sus!4v1725146545199!5m2!1sen!2sus" 
+                            class="w-full h-80" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold text-white mt-12 mb-6">Character References</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-semibold text-white">Engr. Russel Jan Salvador</h4>
+                            <p class="text-blue-400 my-1">Asst. Technical Manager, NKS Corp</p>
+                            <p class="text-gray-400">+639915812238</p>
+                        </div>
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-semibold text-white">Engr. Mark Salgado</h4>
+                            <p class="text-blue-400 my-1">SCADA Sr. Supervisor, National Grid Corporation</p>
+                            <p class="text-gray-400">+639989838220</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center items-center p-4 hidden z-50">
+        <div id="modal-content" class="bg-[#161b22] border border-gray-700 rounded-lg shadow-xl max-w-2xl w-full p-6 relative transform transition-all duration-300 scale-95 opacity-0">
+            <button id="modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-white text-2xl z-10">&times;</button>
+            <img id="modal-image" src="" alt="Project Image" class="rounded-lg w-full h-64 object-cover mb-4">
+            <h3 id="modal-title" class="text-2xl font-bold text-white mb-2"></h3>
+            <p id="modal-description" class="text-gray-400"></p>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.nav-tab');
+            const contentSections = document.querySelectorAll('.content-section');
+            const portfolioItems = document.querySelectorAll('.portfolio-item');
+            
+            // Modal elements
+            const modal = document.getElementById('project-modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalClose = document.getElementById('modal-close');
+            const modalImage = document.getElementById('modal-image');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDescription = document.getElementById('modal-description');
+
+            // Main navigation tabs
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Deactivate all tabs and sections
+                    tabs.forEach(t => t.classList.remove('active-tab'));
+                    contentSections.forEach(s => s.classList.remove('active'));
+
+                    // Activate clicked tab and corresponding section
+                    tab.classList.add('active-tab');
+                    const targetId = tab.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+            // Portfolio item click handler
+            portfolioItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    // Populate modal
+                    modalImage.src = item.dataset.img;
+                    modalTitle.textContent = item.dataset.title;
+                    modalDescription.textContent = item.dataset.description;
+
+                    // Show modal
+                    modal.classList.remove('hidden');
+                    setTimeout(() => modal.classList.add('show'), 10); // For transition
+                });
+            });
+
+            // Function to close modal
+            const closeModal = () => {
+                modal.classList.remove('show');
+                setTimeout(() => modal.classList.add('hidden'), 300); // Wait for transition
+            };
+
+            // Event listeners for closing the modal
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
